@@ -31,5 +31,10 @@ else null
 
 
 
+\b\d{1,2}/\d{1,2}/\d{4}\b|\b\d{1,2}/\d{4}\b
+
+
+
+
 Text.Combine(List.Select(Text.ToCodePoints([Item Transaction Description]), each Character.IsDigit(_)), "")
 
