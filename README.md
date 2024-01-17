@@ -28,3 +28,8 @@ else if [Period] <> null then
     )
 else null
 
+
+
+
+Text.Combine(List.Select(Text.ToCodePoints([Item Transaction Description]), each Character.IsDigit(_)), "")
+
