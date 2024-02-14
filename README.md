@@ -65,5 +65,47 @@ else if Text.Contains([Item Transaction Description], "Dec") then "Q4 " & Text.M
 else null
 
 
+ttttttttttt
 
 
+let
+    Description = [Item Transaction Description],
+    Dates = List.Sort(
+        List.Transform(
+            List.Distinct(
+                List.Select(
+                    List.Buffer({{"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"}} & {"Q1", "Q2", "Q3", "Q4"}), 
+                    (keyword) => Text.Contains(Description, keyword)
+                )
+            ),
+            (keyword) => 
+                let
+                    keywordIndex = Text.PositionOf(Description, keyword, Occurrence.Last),
+                    dateStartIndex = keywordIndex + Text.Length(keyword) + 1,
+                    dateEndIndex = if Text.PositionOf(Description, " ", dateStartIndex) <> -1 then Text.PositionOf(Description, " ", dateStartIndex) else Text.Length(Description),
+                    date = Text.Middle(Description, dateStartIndex, dateEndIndex - dateStartIndex)
+                in
+                    if Text.Contains(date, "to") then
+                        let
+                            dateParts = Text.Split(date, " to "),
+                            lastDateIndex = List.Max({Text.PositionOf(dateParts{0}, " ", Occurrence.Last), Text.PositionOf(dateParts{1}, " ", Occurrence.Last)}),
+                            lastDate = Text.Middle(dateParts{0}, lastDateIndex, Text.Length(dateParts{0}))
+                        in
+                            lastDate
+                    else
+                        date
+        )
+    ),
+    Year = Text.Middle(Dates{List.Count(Dates) - 1}, Text.PositionOf(Dates{List.Count(Dates) - 1}, " ", Occurrence.Last) + 1, 4),
+    Month = Text.Middle(Dates{List.Count(Dates) - 1}, Text.PositionOf(Dates{List.Count(Dates) - 1}, " ", Occurrence.Last) - 3, 3),
+    Quarter = if Month = "Jan" or Month = "Feb" or Month = "Mar" then "Q1 " & Year
+              else if Month = "Apr" or Month = "May" or Month = "Jun" then "Q2 " & Year
+              else if Month = "Jul" or Month = "Aug" or Month = "Sep" then "Q3 " & Year
+              else "Q4 " & Year
+in
+    Quarter
+
+
+
+
+tttttttttttttttttttttt
