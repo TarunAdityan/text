@@ -44,7 +44,6 @@ else
 
 \b\d{1,2}/\d{1,2}/\d{4}\b|\b\d{1,2}/\d{4}\b
 
-
 = if [Item Transaction Description] = null or Text.Length([Item Transaction Description]) = 0 then null
 else let
     LastDateStartPosition = List.Max({Text.PositionOf([Item Transaction Description], "Q1"), 
@@ -69,9 +68,11 @@ else let
     Quarter = if Month = "Jan" or Month = "Feb" or Month = "Mar" then "Q1 " & Year
               else if Month = "Apr" or Month = "May" or Month = "Jun" then "Q2 " & Year
               else if Month = "Jul" or Month = "Aug" or Month = "Sep" then "Q3 " & Year
-              else "Q4 " & Year
+              else if Month = "Oct" or Month = "Nov" or Month = "Dec" then "Q4 " & Year
+              else "Quarter and year not found"
 in
     Quarter
+
 
 
 
