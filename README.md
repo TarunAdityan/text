@@ -44,35 +44,25 @@ else
 
 \b\d{1,2}/\d{1,2}/\d{4}\b|\b\d{1,2}/\d{4}\b
 
-= if [Item Transaction Description] = null or Text.Length([Item Transaction Description]) = 0 then null
-else let
-    LastDateStartPosition = List.Max({Text.PositionOf([Item Transaction Description], "Q1"), 
-                                       Text.PositionOf([Item Transaction Description], "Q2"), 
-                                       Text.PositionOf([Item Transaction Description], "Q3"), 
-                                       Text.PositionOf([Item Transaction Description], "Q4"), 
-                                       Text.PositionOf([Item Transaction Description], "Jan"), 
-                                       Text.PositionOf([Item Transaction Description], "Feb"), 
-                                       Text.PositionOf([Item Transaction Description], "Mar"), 
-                                       Text.PositionOf([Item Transaction Description], "Apr"), 
-                                       Text.PositionOf([Item Transaction Description], "May"), 
-                                       Text.PositionOf([Item Transaction Description], "Jun"), 
-                                       Text.PositionOf([Item Transaction Description], "Jul"), 
-                                       Text.PositionOf([Item Transaction Description], "Aug"), 
-                                       Text.PositionOf([Item Transaction Description], "Sep"), 
-                                       Text.PositionOf([Item Transaction Description], "Oct"), 
-                                       Text.PositionOf([Item Transaction Description], "Nov"), 
-                                       Text.PositionOf([Item Transaction Description], "Dec")}),
-    LastDate = Text.Middle([Item Transaction Description], LastDateStartPosition, Text.Length([Item Transaction Description])),
-    Year = Text.Middle(LastDate, Text.PositionOf(LastDate, " ", Occurrence.Last) + 1, 4),
-    Month = Text.Middle(LastDate, Text.PositionOf(LastDate, " ", Occurrence.Last) - 3, 3),
-    Quarter = if Month = "Jan" or Month = "Feb" or Month = "Mar" then "Q1 " & Year
-              else if Month = "Apr" or Month = "May" or Month = "Jun" then "Q2 " & Year
-              else if Month = "Jul" or Month = "Aug" or Month = "Sep" then "Q3 " & Year
-              else if Month = "Oct" or Month = "Nov" or Month = "Dec" then "Q4 " & Year
-              else "Quarter and year not found"
-in
-    Quarter
 
+= if [Item Transaction Description] = null then null
+else if Text.Contains([Item Transaction Description], "Q1") then "Q1 " & Text.Middle([Item Transaction Description], Text.PositionOf([Item Transaction Description], "Q1") + 3, 4)
+else if Text.Contains([Item Transaction Description], "Q2") then "Q2 " & Text.Middle([Item Transaction Description], Text.PositionOf([Item Transaction Description], "Q2") + 3, 4)
+else if Text.Contains([Item Transaction Description], "Q3") then "Q3 " & Text.Middle([Item Transaction Description], Text.PositionOf([Item Transaction Description], "Q3") + 3, 4)
+else if Text.Contains([Item Transaction Description], "Q4") then "Q4 " & Text.Middle([Item Transaction Description], Text.PositionOf([Item Transaction Description], "Q4") + 3, 4)
+else if Text.Contains([Item Transaction Description], "Jan") then "Q1 " & Text.Middle([Item Transaction Description], Text.PositionOf([Item Transaction Description], "Jan") + 4, 4)
+else if Text.Contains([Item Transaction Description], "Feb") then "Q1 " & Text.Middle([Item Transaction Description], Text.PositionOf([Item Transaction Description], "Feb") + 4, 4)
+else if Text.Contains([Item Transaction Description], "Mar") then "Q1 " & Text.Middle([Item Transaction Description], Text.PositionOf([Item Transaction Description], "Mar") + 4, 4)
+else if Text.Contains([Item Transaction Description], "Apr") then "Q2 " & Text.Middle([Item Transaction Description], Text.PositionOf([Item Transaction Description], "Apr") + 4, 4)
+else if Text.Contains([Item Transaction Description], "May") then "Q2 " & Text.Middle([Item Transaction Description], Text.PositionOf([Item Transaction Description], "May") + 4, 4)
+else if Text.Contains([Item Transaction Description], "Jun") then "Q2 " & Text.Middle([Item Transaction Description], Text.PositionOf([Item Transaction Description], "Jun") + 4, 4)
+else if Text.Contains([Item Transaction Description], "Jul") then "Q3 " & Text.Middle([Item Transaction Description], Text.PositionOf([Item Transaction Description], "Jul") + 4, 4)
+else if Text.Contains([Item Transaction Description], "Aug") then "Q3 " & Text.Middle([Item Transaction Description], Text.PositionOf([Item Transaction Description], "Aug") + 4, 4)
+else if Text.Contains([Item Transaction Description], "Sep") then "Q3 " & Text.Middle([Item Transaction Description], Text.PositionOf([Item Transaction Description], "Sep") + 4, 4)
+else if Text.Contains([Item Transaction Description], "Oct") then "Q4 " & Text.Middle([Item Transaction Description], Text.PositionOf([Item Transaction Description], "Oct") + 4, 4)
+else if Text.Contains([Item Transaction Description], "Nov") then "Q4 " & Text.Middle([Item Transaction Description], Text.PositionOf([Item Transaction Description], "Nov") + 4, 4)
+else if Text.Contains([Item Transaction Description], "Dec") then "Q4 " & Text.Middle([Item Transaction Description], Text.PositionOf([Item Transaction Description], "Dec") + 4, 4)
+else null
 
 
 
