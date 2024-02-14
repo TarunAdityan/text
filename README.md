@@ -70,40 +70,42 @@ ttttttttttt
 
 let
     Description = [Item Transaction Description],
-    Dates = List.Sort(
-        List.Transform(
-            List.Distinct(
-                List.Select(
-                    List.Buffer({{"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"}} & {"Q1", "Q2", "Q3", "Q4"}), 
-                    (keyword) => Text.Contains(Description, keyword)
-                )
-            ),
-            (keyword) => 
-                let
-                    keywordIndex = Text.PositionOf(Description, keyword, Occurrence.Last),
-                    dateStartIndex = keywordIndex + Text.Length(keyword) + 1,
-                    dateEndIndex = if Text.PositionOf(Description, " ", dateStartIndex) <> -1 then Text.PositionOf(Description, " ", dateStartIndex) else Text.Length(Description),
-                    date = Text.Middle(Description, dateStartIndex, dateEndIndex - dateStartIndex)
-                in
-                    if Text.Contains(date, "to") then
+    DateKeywords = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Q1", "Q2", "Q3", "Q4"},
+    Dates = List.Buffer(
+        List.Select(
+            List.Transform(
+                DateKeywords,
+                each 
+                    if Text.Contains(Description, _) then 
                         let
-                            dateParts = Text.Split(date, " to "),
-                            lastDateIndex = List.Max({Text.PositionOf(dateParts{0}, " ", Occurrence.Last), Text.PositionOf(dateParts{1}, " ", Occurrence.Last)}),
-                            lastDate = Text.Middle(dateParts{0}, lastDateIndex, Text.Length(dateParts{0}))
+                            DateString = Text.Range(Description, Text.PositionOf(Description, _, Occurrence.Last), Text.Length(Description)),
+                            Date = Text.Range(DateString, Text.PositionOf(DateString, " "), 11)
                         in
-                            lastDate
-                    else
-                        date
+                            if Text.Contains(Date, "to") then
+                                let
+                                    DateParts = Text.Split(Date, "to"),
+                                    LastDate = List.Last(Text.Split(DateParts{1}, " "))
+                                in
+                                    LastDate
+                            else
+                                Date
+                    else null
+            ),
+            each _ <> null
         )
     ),
-    Year = Text.Middle(Dates{List.Count(Dates) - 1}, Text.PositionOf(Dates{List.Count(Dates) - 1}, " ", Occurrence.Last) + 1, 4),
-    Month = Text.Middle(Dates{List.Count(Dates) - 1}, Text.PositionOf(Dates{List.Count(Dates) - 1}, " ", Occurrence.Last) - 3, 3),
-    Quarter = if Month = "Jan" or Month = "Feb" or Month = "Mar" then "Q1 " & Year
-              else if Month = "Apr" or Month = "May" or Month = "Jun" then "Q2 " & Year
-              else if Month = "Jul" or Month = "Aug" or Month = "Sep" then "Q3 " & Year
-              else "Q4 " & Year
+    SortedDates = List.Sort(Dates, Order.Descending),
+    SelectedDate = List.First(SortedDates),
+    Year = Text.Middle(SelectedDate, Text.PositionOf(SelectedDate, " ") + 1, 4),
+    Month = Text.Middle(SelectedDate, 1, 3),
+    Quarter = 
+        if Number.FromText(Text.Middle(Month, 1, 2)) <= 3 then "Q1 " & Year
+        else if Number.FromText(Text.Middle(Month, 1, 2)) <= 6 then "Q2 " & Year
+        else if Number.FromText(Text.Middle(Month, 1, 2)) <= 9 then "Q3 " & Year
+        else "Q4 " & Year
 in
     Quarter
+
 
 
 
