@@ -27,11 +27,9 @@ else
                 else if Text.Contains([ITD], "Nov") then Text.PositionOf([ITD], "Nov") + 4
                 else if Text.Contains([ITD], "Dec") then Text.PositionOf([ITD], "Dec") + 4
                 else null,
-            yearIndex = Text.PositionOf([ITD], " ", Occurrence.Last()) + 1,
-            month = Text.Middle([ITD], monthIndex, 3),
-            year = Text.Middle([ITD], yearIndex, 4)
+            month = Text.Middle([ITD], monthIndex, 3)
         in 
-            month & " " & year
+            month & " " & Text.From(year)
     else 
         if [Period] <> null then 
             let 
