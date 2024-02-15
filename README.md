@@ -67,44 +67,47 @@ else null
 
 ttttttttttt
 
-
-let
-    Description = [Item Transaction Description],
-    DateKeywords = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Q1", "Q2", "Q3", "Q4"},
-    Dates = List.Buffer(
-        List.Select(
-            List.Transform(
-                DateKeywords,
-                each 
-                    if Text.Contains(Description, _) then 
-                        let
-                            DateString = Text.Range(Description, Text.PositionOf(Description, _, Occurrence.Last), Text.Length(Description)),
-                            Date = Text.Range(DateString, Text.PositionOf(DateString, " "), 11)
-                        in
-                            if Text.Contains(Date, "to") then
-                                let
-                                    DateParts = Text.Split(Date, "to"),
-                                    LastDate = List.Last(Text.Split(DateParts{1}, " "))
-                                in
-                                    LastDate
-                            else
-                                Date
-                    else null
-            ),
-            each _ <> null
-        )
-    ),
-    SortedDates = List.Sort(Dates, Order.Descending),
-    SelectedDate = List.First(SortedDates),
-    Year = Text.Middle(SelectedDate, Text.PositionOf(SelectedDate, " ") + 1, 4),
-    Month = Text.Middle(SelectedDate, 1, 3),
-    Quarter = 
-        if Number.FromText(Text.Middle(Month, 1, 2)) <= 3 then "Q1 " & Year
-        else if Number.FromText(Text.Middle(Month, 1, 2)) <= 6 then "Q2 " & Year
-        else if Number.FromText(Text.Middle(Month, 1, 2)) <= 9 then "Q3 " & Year
-        else "Q4 " & Year
-in
-    Quarter
+= if [Document Date] <> null then 
+    let 
+        year = Date.Year([Document Date]), 
+        month = Date.Month([Document Date]), 
+        quarter = 
+            if month >= 1 and month <= 3 then "Q1" 
+            else if month >= 4 and month <= 6 then "Q2" 
+            else if month >= 7 and month <= 9 then "Q3" 
+            else if month >= 10 and month <= 12 then "Q4" 
+            else null 
+    in 
+        quarter & " " & Text.From(year) 
+else 
+    if [Item Transaction Description] <> null then 
+        let 
+            numericPart = Text.Middle([Item Transaction Description], 0, Text.PositionOf([Item Transaction Description], "/", Occurrence.First())),
+            month = if numericPart <> null then Number.From(numericPart) else null,
+            year = Date.Year([Period]),
+            quarter = 
+                if month <> null and month >= 1 and month <= 3 then "Q1" 
+                else if month <> null and month >= 4 and month <= 6 then "Q2" 
+                else if month <> null and month >= 7 and month <= 9 then "Q3" 
+                else if month <> null and month >= 10 and month <= 12 then "Q4" 
+                else null 
+        in 
+            quarter & " " & Text.From(year) 
+    else 
+        if [Period] <> null then 
+            let 
+                year = Date.Year([Period]), 
+                month = Date.Month([Period]), 
+                quarter = 
+                    if month >= 1 and month <= 3 then "Q1" 
+                    else if month >= 4 and month <= 6 then "Q2" 
+                    else if month >= 7 and month <= 9 then "Q3" 
+                    else if month >= 10 and month <= 12 then "Q4" 
+                    else null 
+            in 
+                quarter & " " & Text.From(year) 
+        else 
+            null
 
 
 
