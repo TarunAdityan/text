@@ -111,7 +111,6 @@ in
 
 
 tttttttttttttttttttttt
-
 = if [Document Date] <> null then 
     let 
         year = Date.Year([Document Date]), 
@@ -123,7 +122,7 @@ else
     if [Customitds] <> null then 
         let
             CustomitdsText = Text.Trim([Customitds]),
-            QuarterPart = Text.FirstN(CustomitdsText, Text.PositionOf(CustomitdsText, " ", Occurrence.First())),
+            QuarterPart = Text.Start(CustomitdsText, Text.PositionOf(CustomitdsText, " ", Occurrence.First())),
             YearPart = Text.Middle(CustomitdsText, Text.PositionOf(CustomitdsText, " ", Occurrence.First()) + 1, 4),
             YearNumber = if Text.Length(YearPart) = 2 then "20" & YearPart else YearPart
         in
