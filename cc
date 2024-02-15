@@ -11,25 +11,25 @@
     in 
         quarter & " " & Text.From(year) 
 else 
-    if [Item Transaction Description] <> null then 
+    if [ITD] <> null then 
         let 
             monthIndex = 
-                if Text.Contains([Item Transaction Description], "Jan") then Text.PositionOf([Item Transaction Description], "Jan") + 4
-                else if Text.Contains([Item Transaction Description], "Feb") then Text.PositionOf([Item Transaction Description], "Feb") + 4
-                else if Text.Contains([Item Transaction Description], "Mar") then Text.PositionOf([Item Transaction Description], "Mar") + 4
-                else if Text.Contains([Item Transaction Description], "Apr") then Text.PositionOf([Item Transaction Description], "Apr") + 4
-                else if Text.Contains([Item Transaction Description], "May") then Text.PositionOf([Item Transaction Description], "May") + 4
-                else if Text.Contains([Item Transaction Description], "Jun") then Text.PositionOf([Item Transaction Description], "Jun") + 4
-                else if Text.Contains([Item Transaction Description], "Jul") then Text.PositionOf([Item Transaction Description], "Jul") + 4
-                else if Text.Contains([Item Transaction Description], "Aug") then Text.PositionOf([Item Transaction Description], "Aug") + 4
-                else if Text.Contains([Item Transaction Description], "Sep") then Text.PositionOf([Item Transaction Description], "Sep") + 4
-                else if Text.Contains([Item Transaction Description], "Oct") then Text.PositionOf([Item Transaction Description], "Oct") + 4
-                else if Text.Contains([Item Transaction Description], "Nov") then Text.PositionOf([Item Transaction Description], "Nov") + 4
-                else if Text.Contains([Item Transaction Description], "Dec") then Text.PositionOf([Item Transaction Description], "Dec") + 4
+                if Text.Contains([ITD], "Jan") then Text.PositionOf([ITD], "Jan") + 4
+                else if Text.Contains([ITD], "Feb") then Text.PositionOf([ITD], "Feb") + 4
+                else if Text.Contains([ITD], "Mar") then Text.PositionOf([ITD], "Mar") + 4
+                else if Text.Contains([ITD], "Apr") then Text.PositionOf([ITD], "Apr") + 4
+                else if Text.Contains([ITD], "May") then Text.PositionOf([ITD], "May") + 4
+                else if Text.Contains([ITD], "Jun") then Text.PositionOf([ITD], "Jun") + 4
+                else if Text.Contains([ITD], "Jul") then Text.PositionOf([ITD], "Jul") + 4
+                else if Text.Contains([ITD], "Aug") then Text.PositionOf([ITD], "Aug") + 4
+                else if Text.Contains([ITD], "Sep") then Text.PositionOf([ITD], "Sep") + 4
+                else if Text.Contains([ITD], "Oct") then Text.PositionOf([ITD], "Oct") + 4
+                else if Text.Contains([ITD], "Nov") then Text.PositionOf([ITD], "Nov") + 4
+                else if Text.Contains([ITD], "Dec") then Text.PositionOf([ITD], "Dec") + 4
                 else null,
-            yearIndex = Text.PositionOf([Item Transaction Description], " ", Occurrence.Last()) + 1,
-            month = Text.Middle([Item Transaction Description], monthIndex, 3),
-            year = Text.Middle([Item Transaction Description], yearIndex, 4)
+            yearIndex = Text.PositionOf([ITD], " ", Occurrence.Last()) + 1,
+            month = Text.Middle([ITD], monthIndex, 3),
+            year = Text.Middle([ITD], yearIndex, 4)
         in 
             month & " " & year
     else 
