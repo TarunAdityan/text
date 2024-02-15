@@ -121,15 +121,13 @@ tttttttttttttttttttttt
         quarter & " " & Text.From(year) 
 else 
     if [Customitds] <> null then 
-        let 
-            QuarterYearText = Text.Trim([Customitds]), 
-            YearPart = if Text.Length(QuarterYearText) = 6 then Text.Middle(QuarterYearText, Text.PositionOf(QuarterYearText, " ", Occurrence.First()) + 1, 4) else Text.PadStart(Text.Middle(QuarterYearText, Text.PositionOf(QuarterYearText, " ", Occurrence.First()) + 1, 2), 4, "20"), 
-            QuarterPart = Text.Middle(QuarterYearText, 0, Text.PositionOf(QuarterYearText, " ", Occurrence.First())), 
-            year = if Text.Contains(YearPart, "20") then Number.FromText(YearPart) else null, 
-            quarter = if Text.Contains(QuarterPart, "Q") then QuarterPart else let month = if Text.Contains(YearPart, "20") = false then Number.From(QuarterPart) else null in 
-                if month <> null and month >= 1 and month <= 3 then "Q1" else if month <> null and month >= 4 and month <= 6 then "Q2" else if month <> null and month >= 7 and month <= 9 then "Q3" else if month <> null and month >= 10 and month <= 12 then "Q4" else null 
-        in 
-            quarter & " " & Text.From(year) 
+        let
+            CustomitdsText = Text.Trim([Customitds]),
+            QuarterPart = Text.FirstN(CustomitdsText, Text.PositionOf(CustomitdsText, " ", Occurrence.First())),
+            YearPart = Text.Middle(CustomitdsText, Text.PositionOf(CustomitdsText, " ", Occurrence.First()) + 1, 4),
+            YearNumber = if Text.Length(YearPart) = 2 then "20" & YearPart else YearPart
+        in
+            QuarterPart & " " & YearNumber
     else 
         if [Period] <> null then 
             let 
