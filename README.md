@@ -111,3 +111,35 @@ in
 
 
 tttttttttttttttttttttt
+
+
+
+= if [Document Date] <> null then 
+    let 
+        year = Date.Year([Document Date]), 
+        month = Date.Month([Document Date]), 
+        quarter = if month >= 1 and month <= 3 then "Q1" else if month >= 4 and month <= 6 then "Q2" else if month >= 7 and month <= 9 then "Q3" else if month >= 10 and month <= 12 then "Q4" else null 
+    in 
+        quarter & " " & Text.From(year) 
+else 
+    if [Item Transaction Description] <> null then 
+        let 
+            QuarterYearText = Text.Trim([Item Transaction Description]), 
+            YearPart = Text.Middle(QuarterYearText, Text.PositionOf(QuarterYearText, " ", Occurrence.First()) + 1, 4), 
+            QuarterPart = Text.Middle(QuarterYearText, 0, Text.PositionOf(QuarterYearText, " ", Occurrence.First())), 
+            year = if Text.Length(YearPart) = 4 and Text.Contains(QuarterPart, "Q") then Number.FromText(YearPart) else Date.Year([Period]), 
+            quarter = if Text.Contains(QuarterPart, "Q") then QuarterPart else let month = if Text.Length(YearPart) = 4 and Text.Contains(QuarterPart, "Q") = false then Number.From(QuarterPart) else null in 
+                if month <> null and month >= 1 and month <= 3 then "Q1" else if month <> null and month >= 4 and month <= 6 then "Q2" else if month <> null and month >= 7 and month <= 9 then "Q3" else if month <> null and month >= 10 and month <= 12 then "Q4" else null 
+        in 
+            quarter & " " & Text.From(year) 
+    else 
+        if [Period] <> null then 
+            let 
+                year = Date.Year([Period]), 
+                month = Date.Month([Period]), 
+                quarter = if month >= 1 and month <= 3 then "Q1" else if month >= 4 and month <= 6 then "Q2" else if month >= 7 and month <= 9 then "Q3" else if month >= 10 and month <= 12 then "Q4" else null 
+            in 
+                quarter & " " & Text.From(year) 
+        else 
+            null
+
