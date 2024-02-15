@@ -113,7 +113,6 @@ in
 tttttttttttttttttttttt
 
 
-
 = if [Document Date] <> null then 
     let 
         year = Date.Year([Document Date]), 
@@ -122,9 +121,9 @@ tttttttttttttttttttttt
     in 
         quarter & " " & Text.From(year) 
 else 
-    if [Item Transaction Description] <> null then 
+    if [Customitds] <> null then 
         let 
-            QuarterYearText = Text.Trim([Item Transaction Description]), 
+            QuarterYearText = Text.Trim([Customitds]), 
             YearPart = Text.Middle(QuarterYearText, Text.PositionOf(QuarterYearText, " ", Occurrence.First()) + 1, 4), 
             QuarterPart = Text.Middle(QuarterYearText, 0, Text.PositionOf(QuarterYearText, " ", Occurrence.First())), 
             year = if Text.Length(YearPart) = 4 and Text.Contains(QuarterPart, "Q") then Number.FromText(YearPart) else Date.Year([Period]), 
