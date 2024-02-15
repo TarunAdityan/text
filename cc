@@ -27,6 +27,7 @@ else
                 else if Text.Contains([ITD], "Nov") then Text.PositionOf([ITD], "Nov") + 4
                 else if Text.Contains([ITD], "Dec") then Text.PositionOf([ITD], "Dec") + 4
                 else null,
+            year = Date.Year([Document Date]), 
             month = Text.Middle([ITD], monthIndex, 3)
         in 
             month & " " & Text.From(year)
