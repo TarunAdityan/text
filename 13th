@@ -41,15 +41,12 @@ else
 
 
 
-
 if [Item Transaction Description] = null then null 
 else 
     let 
         description = [Item Transaction Description],
         quarters = {"Q1", "Q2", "Q3", "Q4"},
-        months = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"},
         findQuarter = List.Select(quarters, each Text.Contains(description, _)),
-        findMonth = List.Select(months, each Text.Contains(description, _)),
         quarterYear = 
             if List.Count(findQuarter) > 0 then 
                 let 
@@ -58,20 +55,12 @@ else
                     latestQuarter = sortedQuarters{0}
                 in 
                     latestQuarter
-            else if List.Count(findMonth) > 0 then 
-                let 
-                    month = findMonth{0},
-                    yearIndex = Text.PositionOf(description, month) + 4,
-                    year = Text.Middle(description, yearIndex, 4),
-                    quarter = 
-                        if Text.Start(description, yearIndex - 5) = "Q1" then "Q1"
-                        else if Text.Start(description, yearIndex - 5) = "Q2" then "Q2"
-                        else if Text.Start(description, yearIndex - 5) = "Q3" then "Q3"
-                        else if Text.Start(description, yearIndex - 5) = "Q4" then "Q4"
-                        else null
+            else 
+                let
+                    quarterYearMatches = List.Buffer(Text.Matches(description, "[Qq][1-4]'.*?[1-2][0-9]{3}")),
+                    maxYear = List.Max(List.Transform(quarterYearMatches, each Text.Middle(_, 3, 4))),
+                    latestQuarterYear = Text.Select(List.First(List.Select(quarterYearMatches, each Text.Middle(_, 1, 2) & Text.Middle(_, 3, 2) = maxYear)), {"Q1", "Q2", "Q3", "Q4"})
                 in
-                    if quarter <> null then quarter & " " & year else null
-            else null
+                    latestQuarterYear
     in 
         quarterYear
-
