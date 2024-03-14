@@ -71,10 +71,4 @@ else
                             ),
                             each [year] <> null
                         )
-                    ),
-                    maxYear = List.Max(List.Transform(quarterYearMatches, each _{1})),
-                    latestQuarterYear = Text.Select(List.First(List.Select(quarterYearMatches, each _{1} = maxYear)), {"Q1", "Q2", "Q3", "Q4"})
-                in
-                    latestQuarterYear
-    in 
-        quarterYear
+        
