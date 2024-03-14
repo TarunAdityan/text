@@ -54,7 +54,7 @@ else
                         startPos = Text.PositionOf(Text.Upper(description), "Q", [endPos]),
                         endPos = if startPos <> -1 then Text.PositionOf(Text.Upper(description), " ", startPos + 1) else -1
                     ],
-                    each [startPos, endPos]
+                    each {startPos = [startPos], endPos = [endPos]} // Return a record containing startPos and endPos
                 ),
                 each [startPos] <> -1 and [endPos] <> -1
             )
