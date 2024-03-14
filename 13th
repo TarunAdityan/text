@@ -45,36 +45,23 @@ else
     let 
         description = [Item Transaction Description],
         quarters = {"Q1", "Q2", "Q3", "Q4"},
-        findQuarter = List.Select(quarters, each Text.Contains(description, _)),
-        quarterYear = 
-            if List.Count(findQuarter) > 0 then 
-                let 
-                    quartersAndYears = List.Transform(findQuarter, each Text.Middle(description, Text.PositionOf(description, _) + 3, 4)),
-                    sortedQuarters = List.Sort(quartersAndYears, Order.Descending),
-                    latestQuarter = sortedQuarters{0}
-                in 
-                    latestQuarter
-            else 
-                let
-                    quarterYearMatches = List.Buffer(
-                        List.Select(
-                            List.Generate(
-                                () => [startPos = 0, endPos = Text.PositionOf(description, "'"), quarter = null, year = null],
-                                each [endPos] <> null,
-                                each [
-                                    startPos = [endPos] + 1,
-                                    endPos = try Text.PositionOf(description, "'", [startPos]) otherwise null,
-                                    quarter = Text.Middle(description, [startPos], 2),
-                                    year = Text.Middle(description, [endPos] + 1, 4)
-                                ],
-                                each { [quarter], [year] } // Corrected here to return a list
-                            ),
-                            each [year] <> null
-                        )
-                    ),
-                    maxYear = List.Max(List.Transform(quarterYearMatches, each _{1})),
-                    latestQuarterYear = List.First(List.Select(quarterYearMatches, each _{1} = maxYear))
-                in
-                    latestQuarterYear{0} & " " & latestQuarterYear{1}
+        quarterYearMatches = List.Buffer(
+            List.Select(
+                List.Generate(
+                    () => [startPos = 0, endPos = 0],
+                    each [endPos] <> -1,
+                    each [
+                        startPos = Text.PositionOf(Text.Upper(description), "Q", [endPos]),
+                        endPos = if startPos <> -1 then Text.PositionOf(Text.Upper(description), " ", startPos + 1) else -1
+                    ],
+                    each [startPos, endPos]
+                ),
+                each [startPos] <> -1 and [endPos] <> -1
+            )
+        ),
+        quarterYears = List.Transform(quarterYearMatches, each Text.Trim(Text.Middle(description, [startPos], [endPos] - [startPos]))),
+        filteredQuarterYears = List.Select(quarterYears, each Text.Length(_) >= 4 and Text.Length(_) <= 7),
+        latestQuarterYear = if List.IsEmpty(filteredQuarterYears) then null else List.Last(List.Sort(filteredQuarterYears))
     in 
-        quarterYear
+        latestQuarterYear
+
