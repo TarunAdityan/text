@@ -54,14 +54,13 @@ else
                         startPos = Text.PositionOf(Text.Upper(description), "Q", [endPos]),
                         endPos = if startPos <> -1 then Text.PositionOf(Text.Upper(description), " ", startPos + 1) else -1
                     ],
-                    each {startPos = [startPos], endPos = [endPos]} // Return a record containing startPos and endPos
+                    each {[startPos], [endPos]} // Return a record containing startPos and endPos
                 ),
                 each [startPos] <> -1 and [endPos] <> -1
             )
         ),
-        quarterYears = List.Transform(quarterYearMatches, each Text.Trim(Text.Middle(description, [startPos], [endPos] - [startPos]))),
+        quarterYears = List.Transform(quarterYearMatches, each Text.Trim(Text.Middle(description, _{0}, _{1} - _{0}))),
         filteredQuarterYears = List.Select(quarterYears, each Text.Length(_) >= 4 and Text.Length(_) <= 7),
         latestQuarterYear = if List.IsEmpty(filteredQuarterYears) then null else List.Last(List.Sort(filteredQuarterYears))
     in 
         latestQuarterYear
-
