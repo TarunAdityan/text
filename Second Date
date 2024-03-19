@@ -1,1 +1,21 @@
+Second Date as Quarter = 
+VAR Description = TRIM([Item transaction description])  -- Trim any extra spaces
+VAR FirstDateEnd = FIND("to", Description)  -- Find the end of the first date
+VAR SecondDateStart = IF(FirstDateEnd > 0, FirstDateEnd + 2, LEN(Description))  -- Find the start of the second date
+VAR SecondDateSubString = MID(Description, SecondDateStart, 20)  -- Assume second date is within the next 20 characters
+VAR SecondDate = IF(
+                    ISNUMBER(SEARCH("Q", SecondDateSubString)),
+                    SecondDateSubString,
+                    -- Assuming dates are in long-form text, e.g., 'June 2023'
+                    "Q" & SWITCH(
+                            TRUE(),
+                            SEARCH("January", SecondDateSubString) > 0 || SEARCH("February", SecondDateSubString) > 0 || SEARCH("March", SecondDateSubString) > 0, "1",
+                            SEARCH("April", SecondDateSubString) > 0 || SEARCH("May", SecondDateSubString) > 0 || SEARCH("June", SecondDateSubString) > 0, "2",
+                            SEARCH("July", SecondDateSubString) > 0 || SEARCH("August", SecondDateSubString) > 0 || SEARCH("September", SecondDateSubString) > 0, "3",
+                            SEARCH("October", SecondDateSubString) > 0 || SEARCH("November", SecondDateSubString) > 0 || SEARCH("December", SecondDateSubString) > 0, "4",
+                            BLANK()
+                        ) & " '" & RIGHT(SecondDateSubString, 2)  -- Extract the year part
+                 )
+RETURN
+IF(FirstDateEnd = 0, BLANK(), SecondDate)
 
