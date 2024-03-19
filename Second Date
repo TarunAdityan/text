@@ -30,19 +30,7 @@
 
 
 
-let
-    ParseQuarterYear = (quarterYearText as text) => 
-    let
-        Quarter = Number.FromText(Text.Middle(quarterYearText, 1, 1)),
-        Year = Number.FromText(Text.End(quarterYearText, 4))
-    in
-        [Quarter = Quarter, Year = Year],
-    A = ParseQuarterYear([Column A]),
-    B = ParseQuarterYear([Column B]),
-    Result = 
-        if A[Year] > B[Year] then [Column A]
-        else if A[Year] < B[Year] then [Column B]
-        else if A[Quarter] >= B[Quarter] then [Column A]
-        else [Column B]
-in
-    Result
+if [Column A] = null or [Column B] = null then null
+else if [Column A] = [Column B] then [Column A]
+else [Column B]
+
