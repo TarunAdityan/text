@@ -1,26 +1,26 @@
-Second Date as Quarter = 
-VAR Description = [Item transaction description]
-VAR FirstDateEnd = FIND("to", Description, 1, LEN(Description))
-VAR SecondDateStart = IF(FirstDateEnd > 0, FirstDateEnd + 3, LEN(Description))
-VAR SecondDateString = MID(Description, SecondDateStart, LEN(Description) - SecondDateStart)
-VAR SecondDate =
-    SWITCH(
-        TRUE(),
-        NOT(ISERROR(SEARCH("Q1", SecondDateString))), "Q1",
-        NOT(ISERROR(SEARCH("Q2", SecondDateString))), "Q2",
-        NOT(ISERROR(SEARCH("Q3", SecondDateString))), "Q3",
-        NOT(ISERROR(SEARCH("Q4", SecondDateString))), "Q4",
-        CONTAINSSTRING(SecondDateString, "January") || CONTAINSSTRING(SecondDateString, "February") || CONTAINSSTRING(SecondDateString, "March"), "Q1",
-        CONTAINSSTRING(SecondDateString, "April") || CONTAINSSTRING(SecondDateString, "May") || CONTAINSSTRING(SecondDateString, "June"), "Q2",
-        CONTAINSSTRING(SecondDateString, "July") || CONTAINSSTRING(SecondDateString, "August") || CONTAINSSTRING(SecondDateString, "September"), "Q3",
-        CONTAINSSTRING(SecondDateString, "October") || CONTAINSSTRING(SecondDateString, "November") || CONTAINSSTRING(SecondDateString, "December"), "Q4",
-        BLANK()
-    )
-VAR SecondDateYear =
-    IF(
-        SecondDate <> BLANK(),
-        MID(SecondDateString, SEARCH("20", SecondDateString, 1, -1), 4),
-        BLANK()
-    )
-RETURN
-IF(SecondDateStart <= FirstDateEnd || SecondDate = BLANK(), BLANK(), SecondDate & " " & SecondDateYear)
+let
+    // Function to extract the quarter from the date string
+    ExtractQuarter = (description as text) as text =>
+        let
+            TextAfterTo = Text.AfterDelimiter(description, "to ", {0, RelativePosition.FromEnd}),
+            GetQuarter = try 
+                            if Text.Contains(TextAfterTo, "Q") then 
+                                Text.Middle(TextAfterTo, Text.PositionOf(TextAfterTo, "Q"), 3)
+                            else 
+                                let
+                                    MonthName = Text.Middle(TextAfterTo, 0, 3),
+                                    Quarter = 
+                                        if List.Contains({"Jan", "Feb", "Mar"}, MonthName) then "Q1" 
+                                        else if List.Contains({"Apr", "May", "Jun"}, MonthName) then "Q2" 
+                                        else if List.Contains({"Jul", "Aug", "Sep"}, MonthName) then "Q3" 
+                                        else if List.Contains({"Oct", "Nov", "Dec"}, MonthName) then "Q4" 
+                                        else null,
+                                    Year = Text.Middle(TextAfterTo, Text.Length(TextAfterTo) - 4, 4),
+                                    Result = Quarter & " '" & Year
+                                in Result
+                        otherwise null
+        in 
+            GetQuarter
+in
+    ExtractQuarter([Item transaction description])
+
