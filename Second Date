@@ -1,21 +1,45 @@
 Second Date as Quarter = 
-VAR Description = TRIM([Item transaction description])  -- Trim any extra spaces
-VAR FirstDateEnd = FIND("to", Description)  -- Find the end of the first date
-VAR SecondDateStart = IF(FirstDateEnd > 0, FirstDateEnd + 2, LEN(Description))  -- Find the start of the second date
-VAR SecondDateSubString = MID(Description, SecondDateStart, 20)  -- Assume second date is within the next 20 characters
-VAR SecondDate = IF(
-                    ISNUMBER(SEARCH("Q", SecondDateSubString)),
-                    SecondDateSubString,
-                    -- Assuming dates are in long-form text, e.g., 'June 2023'
-                    "Q" & SWITCH(
-                            TRUE(),
-                            SEARCH("January", SecondDateSubString) > 0 || SEARCH("February", SecondDateSubString) > 0 || SEARCH("March", SecondDateSubString) > 0, "1",
-                            SEARCH("April", SecondDateSubString) > 0 || SEARCH("May", SecondDateSubString) > 0 || SEARCH("June", SecondDateSubString) > 0, "2",
-                            SEARCH("July", SecondDateSubString) > 0 || SEARCH("August", SecondDateSubString) > 0 || SEARCH("September", SecondDateSubString) > 0, "3",
-                            SEARCH("October", SecondDateSubString) > 0 || SEARCH("November", SecondDateSubString) > 0 || SEARCH("December", SecondDateSubString) > 0, "4",
-                            BLANK()
-                        ) & " '" & RIGHT(SecondDateSubString, 2)  -- Extract the year part
-                 )
+VAR Description = [Item transaction description]
+VAR FirstDateEnd = FIND("to", Description, -1, BLANK())
+VAR SecondDateStart = IF(FirstDateEnd > 0, FirstDateEnd + 3, BLANK())
+VAR SecondDateString = MID(Description, SecondDateStart, LEN(Description) - SecondDateStart + 1)
+VAR SecondDate =
+    IF(
+        FirstDateEnd <> BLANK(),
+        SWITCH(
+            TRUE(),
+            SEARCH("Q1", SecondDateString, 1, -1) > 0, "Q1",
+            SEARCH("Q2", SecondDateString, 1, -1) > 0, "Q2",
+            SEARCH("Q3", SecondDateString, 1, -1) > 0, "Q3",
+            SEARCH("Q4", SecondDateString, 1, -1) > 0, "Q4",
+            SEARCH("January", SecondDateString, 1, -1) > 0, "Q1",
+            SEARCH("February", SecondDateString, 1, -1) > 0, "Q1",
+            SEARCH("March", SecondDateString, 1, -1) > 0, "Q1",
+            SEARCH("April", SecondDateString, 1, -1) > 0, "Q2",
+            SEARCH("May", SecondDateString, 1, -1) > 0, "Q2",
+            SEARCH("June", SecondDateString, 1, -1) > 0, "Q2",
+            SEARCH("July", SecondDateString, 1, -1) > 0, "Q3",
+            SEARCH("August", SecondDateString, 1, -1) > 0, "Q3",
+            SEARCH("September", SecondDateString, 1, -1) > 0, "Q3",
+            SEARCH("October", SecondDateString, 1, -1) > 0, "Q4",
+            SEARCH("November", SecondDateString, 1, -1) > 0, "Q4",
+            SEARCH("December", SecondDateString, 1, -1) > 0, "Q4",
+            BLANK()
+        ),
+        BLANK()
+    )
+VAR SecondDateYear = 
+    IF(
+        FirstDateEnd <> BLANK(),
+        SWITCH(
+            TRUE(),
+            SEARCH("2023", SecondDateString, 1, -1) > 0, "2023",
+            SEARCH("2024", SecondDateString, 1, -1) > 0, "2024",
+            SEARCH("2025", SecondDateString, 1, -1) > 0, "2025",
+            // Add more years as needed
+            BLANK()
+        ),
+        BLANK()
+    )
 RETURN
-IF(FirstDateEnd = 0, BLANK(), SecondDate)
-
+IF(SecondDateStart = 0 || SecondDate = BLANK(), BLANK(), SecondDate & " " & SecondDateYear)
