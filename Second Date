@@ -1,28 +1,28 @@
-let
-    Source = YourTableNameHere, // Replace YourTableNameHere with your actual table name
-    AddCustom = Table.AddColumn(Source, "Second Date Extracted", each 
+
         let
             Desc = [Item Transaction Description],
-            MidPoint = Text.PositionOf(Desc, " to ", Occurrence.Last),
-            SubText = if MidPoint > 0 then Text.Middle(Desc, MidPoint + 4) else Desc,
-            Result = if Text.Contains(SubText, "Q1") then "Q1 " & Text.Middle(SubText, Text.PositionOf(SubText, "Q1") + 3, 4)
-                     else if Text.Contains(SubText, "Q2") then "Q2 " & Text.Middle(SubText, Text.PositionOf(SubText, "Q2") + 3, 4)
-                     else if Text.Contains(SubText, "Q3") then "Q3 " & Text.Middle(SubText, Text.PositionOf(SubText, "Q3") + 3, 4)
-                     else if Text.Contains(SubText, "Q4") then "Q4 " & Text.Middle(SubText, Text.PositionOf(SubText, "Q4") + 3, 4)
-                     else if Text.Contains(SubText, "Jan") then "Q1 " & Text.Middle(SubText, Text.PositionOf(SubText, "Jan") + 4, 4)
-                     else if Text.Contains(SubText, "Feb") then "Q1 " & Text.Middle(SubText, Text.PositionOf(SubText, "Feb") + 4, 4)
-                     else if Text.Contains(SubText, "Mar") then "Q1 " & Text.Middle(SubText, Text.PositionOf(SubText, "Mar") + 4, 4)
-                     else if Text.Contains(SubText, "Apr") then "Q2 " & Text.Middle(SubText, Text.PositionOf(SubText, "Apr") + 4, 4)
-                     else if Text.Contains(SubText, "May") then "Q2 " & Text.Middle(SubText, Text.PositionOf(SubText, "May") + 4, 4)
-                     else if Text.Contains(SubText, "Jun") then "Q2 " & Text.Middle(SubText, Text.PositionOf(SubText, "Jun") + 4, 4)
-                     else if Text.Contains(SubText, "Jul") then "Q3 " & Text.Middle(SubText, Text.PositionOf(SubText, "Jul") + 4, 4)
-                     else if Text.Contains(SubText, "Aug") then "Q3 " & Text.Middle(SubText, Text.PositionOf(SubText, "Aug") + 4, 4)
-                     else if Text.Contains(SubText, "Sep") then "Q3 " & Text.Middle(SubText, Text.PositionOf(SubText, "Sep") + 4, 4)
-                     else if Text.Contains(SubText, "Oct") then "Q4 " & Text.Middle(SubText, Text.PositionOf(SubText, "Oct") + 4, 4)
-                     else if Text.Contains(SubText, "Nov") then "Q4 " & Text.Middle(SubText, Text.PositionOf(SubText, "Nov") + 4, 4)
-                     else if Text.Contains(SubText, "Dec") then "Q4 " & Text.Middle(SubText, Text.PositionOf(SubText, "Dec") + 4, 4)
-                     else null
+            Result = if Desc = null then null else
+                let
+                    MidPoint = Text.PositionOf(Desc, " to ", Occurrence.Last),
+                    SubText = if MidPoint > 0 then Text.Middle(Desc, MidPoint + 4) else Desc,
+                    ExtractedDate = if Text.Contains(SubText, "Q1") then "Q1 " & Text.Middle(SubText, Text.PositionOf(SubText, "Q1") + 3, 4)
+                         else if Text.Contains(SubText, "Q2") then "Q2 " & Text.Middle(SubText, Text.PositionOf(SubText, "Q2") + 3, 4)
+                         else if Text.Contains(SubText, "Q3") then "Q3 " & Text.Middle(SubText, Text.PositionOf(SubText, "Q3") + 3, 4)
+                         else if Text.Contains(SubText, "Q4") then "Q4 " & Text.Middle(SubText, Text.PositionOf(SubText, "Q4") + 3, 4)
+                         else if Text.Contains(SubText, "Jan") then "Q1 " & Text.Middle(SubText, Text.PositionOf(SubText, "Jan") + 4, 4)
+                         else if Text.Contains(SubText, "Feb") then "Q1 " & Text.Middle(SubText, Text.PositionOf(SubText, "Feb") + 4, 4)
+                         else if Text.Contains(SubText, "Mar") then "Q1 " & Text.Middle(SubText, Text.PositionOf(SubText, "Mar") + 4, 4)
+                         else if Text.Contains(SubText, "Apr") then "Q2 " & Text.Middle(SubText, Text.PositionOf(SubText, "Apr") + 4, 4)
+                         else if Text.Contains(SubText, "May") then "Q2 " & Text.Middle(SubText, Text.PositionOf(SubText, "May") + 4, 4)
+                         else if Text.Contains(SubText, "Jun") then "Q2 " & Text.Middle(SubText, Text.PositionOf(SubText, "Jun") + 4, 4)
+                         else if Text.Contains(SubText, "Jul") then "Q3 " & Text.Middle(SubText, Text.PositionOf(SubText, "Jul") + 4, 4)
+                         else if Text.Contains(SubText, "Aug") then "Q3 " & Text.Middle(SubText, Text.PositionOf(SubText, "Aug") + 4, 4)
+                         else if Text.Contains(SubText, "Sep") then "Q3 " & Text.Middle(SubText, Text.PositionOf(SubText, "Sep") + 4, 4)
+                         else if Text.Contains(SubText, "Oct") then "Q4 " & Text.Middle(SubText, Text.PositionOf(SubText, "Oct") + 4, 4)
+                         else if Text.Contains(SubText, "Nov") then "Q4 " & Text.Middle(SubText, Text.PositionOf(SubText, "Nov") + 4, 4)
+                         else if Text.Contains(SubText, "Dec") then "Q4 " & Text.Middle(SubText, Text.PositionOf(SubText, "Dec") + 4, 4)
+                         else null
+                in 
+                    ExtractedDate
         in 
-            Result)
-in
-    AddCustom
+            Result
